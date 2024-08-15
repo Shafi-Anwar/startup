@@ -1,5 +1,6 @@
 // pages/index.js
 import Head from 'next/head'
+import Image from 'next/image'
 
 export default function Home() {
   return (
@@ -14,7 +15,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative bg-blue-900 text-white">
           <div className="absolute inset-0">
-            <img src="https://cdn.pixabay.com/photo/2021/08/04/13/06/software-developer-6521720_640.jpg" className="object-cover w-full h-full" />
+            <Image src="https://cdn.pixabay.com/photo/2021/08/04/13/06/software-developer-6521720_640.jpg" className="object-cover w-full h-full" alt='logo' />
             <div className="absolute inset-0 bg-black opacity-50"></div>
           </div>
           <div className="relative container mx-auto px-6 py-16 lg:py-32 text-center">

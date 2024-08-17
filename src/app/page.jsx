@@ -15,13 +15,13 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative bg-blue-900 text-white">
           <div className="absolute inset-0">
-            <Image src="https://cdn.pixabay.com/photo/2021/08/04/13/06/software-developer-6521720_640.jpg" className="object-cover w-full h-full" alt='logo' />
+            <Image src="https://cdn.pixabay.com/photo/2021/08/04/13/06/software-developer-6521720_640.jpg" className="object-cover w-full h-full" width={100} height={100}  alt="img_1"/>
             <div className="absolute inset-0 bg-black opacity-50"></div>
           </div>
           <div className="relative container mx-auto px-6 py-16 lg:py-32 text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-4">Welcome to My Startup</h1>
             <p className="text-lg mb-8">Innovating the future with cutting-edge solutions.</p>
-            <a href="/signin" className="bg-yellow-500 text-black py-2 px-6 rounded-full text-lg font-semibold hover:bg-yellow-400">Get Started</a>
+            <a href="/sign-in" className="bg-yellow-500 text-black py-2 px-6 rounded-full text-lg font-semibold hover:bg-yellow-400">Get Started</a>
           </div>
         </section>
 

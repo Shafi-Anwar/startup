@@ -60,6 +60,7 @@ const AddEmployeePage = () => {
           Name:
           <input
             type="text"
+            placeholder="Enter Employee name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -68,9 +69,10 @@ const AddEmployeePage = () => {
           />
         </label>
         <label className="block mb-2">
-          Phone:
+          Phone Number:
           <input
-            type="text"
+            type="number"
+            placeholder="Enter Employee phone number"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
@@ -93,6 +95,7 @@ const AddEmployeePage = () => {
           Salary:
           <input
             type="number"
+            placeholder="Enter employee salary"
             name="salary"
             value={formData.salary}
             onChange={handleChange}

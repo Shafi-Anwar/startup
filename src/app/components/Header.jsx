@@ -1,19 +1,24 @@
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '../context/AuthContext';
+import { UserButton, useUser } from '@clerk/nextjs';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, signOut } = useUser();  // Ensure `useUser` hook is imported from @clerk/nextjs
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleLogoClick = () => {
-    if (user) {
-      window.location.href = '/dashboard'; // Redirect to dashboard
-    } else {
-      window.location.href = '/signin'; // Redirect to sign-in
+    window.location.href = '/dashboard'; // Redirect to dashboard
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(); // Ensure signOut is awaited and handled properly
+      window.location.href = '/'; // Redirect to home or login page after logout
+    } catch (error) {
+      console.error('Error during sign out:', error); // Log error if signOut fails
     }
   };
 
@@ -58,7 +63,7 @@ const Header = () => {
             {user ? (
               <>
                 <li className="text-lg">
-                  <span>Welcome, {user.name}</span>
+                  <span>Welcome, {user.fullName || user.username || 'User'}</span>
                 </li>
                 <li>
                   <Link href="/dashboard" className="hover:text-gray-400 transition-colors">
@@ -66,27 +71,33 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <button onClick={logout} className="hover:text-gray-400 transition-colors">
-                    Logout
-                  </button>
+                  <UserButton />
                 </li>
               </>
             ) : (
               <>
                 <li>
-                  <Link href="/signin" className="hover:text-gray-400 transition-colors">
-                    Sign In
+                  <Link href="/" className="hover:text-gray-400 transition-colors">
+                    Home
                   </Link>
                 </li>
                 <li>
-                  <Link href="/signup" className="hover:text-gray-400 transition-colors">
+                  <Link href="/sign-up" className="hover:text-gray-400 transition-colors">
                     Sign Up
                   </Link>
                 </li>
                 <li>
-                <Link href="/contact" className="hover:text-gray-400 transition-colors">
+                  <Link href="/sign-in" className="hover:text-gray-400 transition-colors">
+                    Sign In
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-gray-400 transition-colors">
                     Email Us
                   </Link>
+                </li>
+                <li>
+                  <UserButton />
                 </li>
               </>
             )}

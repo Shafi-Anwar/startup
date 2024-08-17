@@ -56,7 +56,7 @@ export default function PersonDetails() {
           </div>
           <div className="flex-1">
             <p className="text-lg font-medium mb-2">Salary:</p>
-            <p className="text-gray-700">{employee.salary}</p>
+            <p className="text-gray-700">${employee.salary}</p>
           </div>
         </div>
         <div className="mb-6">

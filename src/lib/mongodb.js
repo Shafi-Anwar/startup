@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-if (!process.env.MONGODB_URI) {
+if (!process.env.MONGODB_URI || "mongodb+srv://Shafi:Sufiyan10%23shafi24@cluster0.irboebx.mongodb.net/employeeDB?retryWrites=true&w=majority") {
   throw new Error('Please add your Mongo URI to .env.local');
 }
 

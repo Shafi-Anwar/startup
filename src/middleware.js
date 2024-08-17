@@ -1,6 +1,15 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from 'next/server';
 
-export default clerkMiddleware();
+export default function middleware(req) {
+  // Check if the runtime environment supports Clerk or not
+  if (process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_RUNTIME !== 'edge') {
+    return clerkMiddleware()(req);
+  }
+
+  // For environments that don't support Clerk
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [

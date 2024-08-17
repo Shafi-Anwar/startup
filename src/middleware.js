@@ -1,8 +1,13 @@
+import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from 'next/server';
 
+// Apply Clerk middleware only if in a supported environment
+const middleware = process.env.NEXT_PUBLIC_RUNTIME === 'edge' 
+  ? (req) => NextResponse.next() 
+  : clerkMiddleware();
+
 export default function middleware(req) {
-  // Logic for Edge-compatible operations
-  return NextResponse.next();
+  return middleware(req);
 }
 
 export const config = {

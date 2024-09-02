@@ -1,4 +1,3 @@
-
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,14 +7,32 @@ import { FaPen } from "react-icons/fa";
 const Dashboard = () => {
     const [employees, setEmployees] = useState([]);
     const [search, setSearch] = useState('');
+    const [error, setError] = useState(null); // To store any errors
     const router = useRouter();
 
     useEffect(() => {
         const fetchEmployees = async () => {
-            const response = await fetch('/api/employees');
-            const data = await response.json();
-            setEmployees(data);
+            try {
+                const response = await fetch('/api/employees');
+                
+                // Log the raw response for debugging
+                const responseText = await response.text();
+                console.log('Raw API response:', responseText);
+                
+                // Check if the response is empty or not JSON
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                // Try parsing JSON
+                const data = JSON.parse(responseText || '[]'); // Default to empty array if response is empty
+                setEmployees(data);
+            } catch (error) {
+                console.error('Failed to fetch employees:', error);
+                setError('Failed to fetch employees');
+            }
         };
+
         fetchEmployees();
     }, []);
 
@@ -24,12 +41,16 @@ const Dashboard = () => {
     );
 
     const handleDelete = async (id) => {
-        await fetch('/api/employees', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
-        });
-        setEmployees(employees.filter(employee => employee._id !== id));
+        try {
+            await fetch('/api/employees', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            setEmployees(employees.filter(employee => employee._id !== id));
+        } catch (error) {
+            console.error('Failed to delete employee:', error);
+        }
     };
 
     const handleAdd = () => {
@@ -60,6 +81,7 @@ const Dashboard = () => {
                         </button>
                     </div>
                 </header>
+                {error && <p className="text-red-500 mb-4">{error}</p>} {/* Display error if any */}
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
                         <thead>

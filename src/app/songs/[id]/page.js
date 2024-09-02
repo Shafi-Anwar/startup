@@ -1,4 +1,6 @@
-import { getAccessToken, fetchSong } from '@/lib/spotify';
+// src/app/songs/[id]/page.js
+
+import { fetchSong } from '@/lib/spotify';
 import SongPlayer from '../SongPlayer';
 
 const SongPage = async ({ params }) => {
@@ -7,14 +9,9 @@ const SongPage = async ({ params }) => {
     let errorMessage = null;
 
     try {
-        const accessToken = await getAccessToken();
-        if (!accessToken) {
-            errorMessage = 'No access token received';
-        } else {
-            song = await fetchSong(id, accessToken);
-            if (!song) {
-                errorMessage = `No song data found for ID: ${id}`;
-            }
+        song = await fetchSong(id);
+        if (!song) {
+            errorMessage = `No song data found for ID: ${id}`;
         }
     } catch (error) {
         console.error('Error fetching song data:', error.message);
@@ -36,7 +33,7 @@ const SongPage = async ({ params }) => {
             </p>
         );
     }
-   
+
     return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg mt-6">
             <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6">

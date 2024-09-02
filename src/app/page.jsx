@@ -24,7 +24,7 @@ export default function Home() {
     { title: "Employee Profiles", description: "Comprehensive profiles with skills, achievements, and career paths.", icon: Users },
     { title: "Task Management", description: "Efficient task allocation and progress tracking for teams.", icon: Briefcase },
     { title: "Performance Analytics", description: "In-depth insights into employee and team performance.", icon: BarChart },
-    { title: "Fun Zone", description: "Games, challenges, and social features to boost team morale.", icon: Coffee }
+    { title: "Entertainment", description:  "Movies and songs .", icon: Coffee }
   ]
 
   return (
@@ -183,56 +183,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Call to Action Section */}
-        <motion.section 
-          id="cta" 
-          className="bg-gradient-to-r from-indigo-800 to-indigo-900 text-white py-24 relative"
-          style={{ opacity }}
-        >
-          <motion.div 
-            className="absolute inset-0 border-t-4 border-b-4 border-white/10"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          ></motion.div>
-          <div className="container mx-auto px-6 text-center relative z-10">
-            <motion.h2 
-              className="text-4xl font-bold mb-8 relative inline-block"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              Ready to Transform Your Workplace?
-              <motion.span 
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-25 blur-sm"
-                animate={{ x: ['0%', '100%'] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              ></motion.span>
-            </motion.h2>
-            <motion.p 
-              className="text-xl mb-10 max-w-2xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              Join thousands of companies already using Maneger to boost productivity and employee satisfaction.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <Button asChild size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white hover:text-indigo-900 transition-all duration-300 relative overflow-hidden group">
-                <Link href="/demo">
-                  Request a Demo
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-50 transform -skew-x-12 -translate-x-full transition-transform duration-1000 ease-out group-hover:translate-x-full"></span>
-                </Link>
-              </Button>
-            </motion.div>
-          </div>
-        </motion.section>
+
       </main>
 
       <footer className="bg-indigo-950 text-white py-6 text-center relative overflow-hidden">

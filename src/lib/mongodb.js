@@ -1,30 +1,21 @@
 import { MongoClient } from 'mongodb';
 
-if (!process.env.MONGODB_URI || "mongodb+srv://Shafi:Sufiyan10%23shafi24@cluster0.irboebx.mongodb.net/employeeDB?retryWrites=true&w=majority") {
-  throw new Error('Please add your Mongo URI to .env.local');
-}
-
 const uri = process.env.MONGODB_URI;
-const options = {};
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-let client;
-let clientPromise;
-
-if (process.env.NODE_ENV === 'development') {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
-  }
-  clientPromise = global._mongoClientPromise;
-} else {
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
-
+// Function to connect to the database
 export async function connectToDatabase() {
-  const client = await clientPromise;
-  const db = client.db(); // Use the default database (from the MongoDB URI)
-  return { client, db };
+  try {
+    if (!client.isConnected()) {
+      await client.connect();
+    }
+    const db = client.db('your-database-name'); // Replace with your database name
+    return { db, client };
+  } catch (error) {
+    console.error('Failed to connect to database:', error);
+    throw new Error('Database connection error');
+  }
 }
-
-export default clientPromise;

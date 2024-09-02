@@ -1,33 +1,50 @@
-import clientPromise from "@/lib/mongodb";
-import { MongoClient } from "mongodb";
+// src/app/api/employees/route.js
 
+import { connectToDatabase } from '../../../lib/mongodb';
+import { ObjectId } from 'mongodb';
+
+// Fetch all employees
 export async function GET() {
-  try {
-    const client = await clientPromise;
-    const db = client.db('employeeDB');
+    const db = await connectToDatabase();
     const collection = db.collection('employees');
-
     const employees = await collection.find({}).toArray();
-    return new Response(JSON.stringify(employees), { status: 200 });
-  } catch (error) {
-    console.error('Error fetching employees:', error);
-    return new Response(JSON.stringify({ message: 'Error fetching employees' }), { status: 500 });
-  }
+    return new Response(JSON.stringify(employees), {
+        headers: { 'Content-Type': 'application/json' }
+    });
 }
 
-export async function POST(req) {
-  try {
-    const client = await clientPromise;
-    const db = client.db('employeeDB');
+// Add a new employee
+export async function POST(request) {
+    const { name, position, department } = await request.json();
+    const db = await connectToDatabase();
     const collection = db.collection('employees');
-
-    const data = await req.json();
-    const result = await collection.insertOne(data);
-
-    return new Response(JSON.stringify({ message: 'Employee added successfully', id: result.insertedId }), { status: 201 });
-  } catch (error) {
-    console.error('Error adding employee:', error);
-    return new Response(JSON.stringify({ message: 'Error adding employee' }), { status: 500 });
-  }
+    const result = await collection.insertOne({ name, position, department });
+    return new Response(JSON.stringify(result.insertedId), {
+        headers: { 'Content-Type': 'application/json' }
+    });
 }
-  
+
+// Update an existing employee
+export async function PUT(request) {
+    const { id, name, position, department } = await request.json();
+    const db = await connectToDatabase();
+    const collection = db.collection('employees');
+    const result = await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { name, position, department } }
+    );
+    return new Response(JSON.stringify(result), {
+        headers: { 'Content-Type': 'application/json' }
+    });
+}
+
+// Delete an employee
+export async function DELETE(request) {
+    const { id } = await request.json();
+    const db = await connectToDatabase();
+    const collection = db.collection('employees');
+    await collection.deleteOne({ _id: new ObjectId(id) });
+    return new Response(JSON.stringify({ message: 'Employee deleted' }), {
+        headers: { 'Content-Type': 'application/json' }
+    });
+}

@@ -1,58 +1,26 @@
-// src/app/api/employees/[id]/route.js
-import clientPromise from '@/lib/mongodb';
+// pages/api/employees/[id].js
+import { connectToDatabase } from '../../../lib/mongodb'; // Adjust path if needed
 import { ObjectId } from 'mongodb';
 
-export async function GET(req, { params }) {
-  const { id } = params;
-  try {
-    const client = await clientPromise;
-    const db = client.db();
-    const employee = await db.collection('employees').findOne({ _id: new ObjectId(id) });
-    if (!employee) {
-      return new Response(JSON.stringify({ message: 'Employee not found' }), { status: 404 });
+export async function handler(req, res) {
+    const db = await connectToDatabase();
+    const collection = db.collection('employees');
+    const { id } = req.query;
+
+    switch (req.method) {
+        case 'PUT':
+            const { name, position, department } = req.body;
+            await collection.updateOne(
+                { _id: new ObjectId(id) },
+                { $set: { name, position, department } }
+            );
+            res.json({ message: 'Employee updated' });
+            break;
+        case 'GET':
+            const employee = await collection.findOne({ _id: new ObjectId(id) });
+            res.json(employee);
+            break;
+        default:
+            res.status(405).end(); // Method Not Allowed
     }
-    return new Response(JSON.stringify(employee), { status: 200 });
-  } catch (error) {
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
-  }
-}
-
-export async function PUT(req, { params }) {
-  const { id } = params;
-  const { name, phone, dateJoined, salary, paymentDone, url } = await req.json();
-
-  try {
-    const client = await clientPromise;
-    const db = client.db();
-    const result = await db.collection('employees').updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { name, phone, dateJoined, salary, paymentDone, url } }
-    );
-
-    if (result.matchedCount === 0) {
-      return new Response(JSON.stringify({ message: 'Employee not found' }), { status: 404 });
-    }
-
-    return new Response(JSON.stringify({ message: 'Employee updated successfully' }), { status: 200 });
-  } catch (error) {
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
-  }
-}
-
-export async function DELETE(req, { params }) {
-  const { id } = params;
-  
-  try {
-    const client = await clientPromise;
-    const db = client.db();
-    const result = await db.collection('employees').deleteOne({ _id: new ObjectId(id) });
-
-    if (result.deletedCount === 0) {
-      return new Response(JSON.stringify({ message: 'Employee not found' }), { status: 404 });
-    }
-
-    return new Response(JSON.stringify({ message: 'Employee deleted successfully' }), { status: 200 });
-  } catch (error) {
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
-  }
 }

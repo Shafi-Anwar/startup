@@ -1,195 +1,83 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+"use client"
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { dummyEmployees } from '../data'; // Adjust path as needed
 
-// Function to generate a background color based on the name
-const getBackgroundColor = (name) => {
-  const colors = [
-    "bg-red-500",
-    "bg-green-500",
-    "bg-blue-500",
-    "bg-yellow-500",
-    "bg-purple-500",
-  ];
-  const index = name.charCodeAt(0) % colors.length;
-  return colors[index];
-};
+const EditEmployee = () => {
+    const [employee, setEmployee] = useState(null);
+    const [name, setName] = useState('');
+    const [position, setPosition] = useState('');
+    const [department, setDepartment] = useState('');
+    const router = useRouter();
+    const { id } = useParams(); // Extract ID from URL
 
-// Function to get initials from the name
-const getInitials = (name) => {
-  const names = name.split(" ");
-  if (names.length > 1) {
-    return names[0][0] + names[1][0];
-  }
-  return names[0][0];
-};
+    useEffect(() => {
+        const employeeData = dummyEmployees.find(emp => emp.id === parseInt(id));
+        if (employeeData) {
+            setEmployee(employeeData);
+            setName(employeeData.name);
+            setPosition(employeeData.position);
+            setDepartment(employeeData.department);
+        }
+    }, [id]);
 
-const EditEmployeePage = ({ params }) => {
-  const { id } = params;
-  const [employee, setEmployee] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    dateJoined: "",
-    salary: 0,
-    paymentDone: false,
-    url: "",
-  });
-  const router = useRouter();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Normally, you'd send updated data to a backend here.
+        // For simplicity, this simulates updating data and redirects to the dashboard.
+        // Find and update the employee in the dummy data
+        const updatedEmployees = dummyEmployees.map(emp =>
+            emp.id === parseInt(id) ? { ...emp, name, position, department } : emp
+        );
+        // Assuming that `dummyEmployees` can be modified directly for this simulation
+        // This won't persist changes across sessions in a real app.
+        router.push('/');
+    };
 
-  useEffect(() => {
-    async function fetchEmployee() {
-      try {
-        const response = await fetch(`/api/employees/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch employee data");
-        const data = await response.json();
-        setEmployee(data);
-        setFormData(data);
-      } catch (error) {
-        console.error("Error fetching employee:", error);
-        alert("Failed to fetch employee details.");
-      }
-    }
+    if (!employee) return <p>Loading...</p>;
 
-    fetchEmployee();
-  }, [id]);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await fetch(`/api/employees/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        router.push("/dashboard");
-      } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.message || "Failed to update employee"}`);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-      alert("An unexpected error occurred. Please try again.");
-    }
-  };
-
-  const handleCreateMeetLink = () => {
-    // Redirect to Google Meet's meeting creation page
-    window.open("https://meet.google.com/new", "_blank");
-  };
-
-  if (!employee) return <p className="text-center text-gray-700">Loading...</p>;
-
-  return (
-    <div className="container mx-auto p-6 md:p-8 lg:p-12">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">
-        Edit Employee
-      </h1>
-      <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-        <div className="mb-6 flex justify-center items-center">
-          <div
-            className={`w-24 h-24 md:w-32 md:h-32 flex items-center justify-center rounded-full text-white ${getBackgroundColor(
-              employee.name
-            )}`}
-          >
-            <span className="text-xl md:text-3xl font-bold">
-              {getInitials(employee.name)}
-            </span>
-          </div>
+    return (
+        <div className="min-h-screen bg-gray-100 p-6">
+            <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                <h1 className="text-2xl font-semibold text-gray-800 mb-6">Edit Employee</h1>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label className="block text-gray-700 mb-2">Name</label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-lg"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 mb-2">Position</label>
+                        <input
+                            type="text"
+                            value={position}
+                            onChange={(e) => setPosition(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-lg"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 mb-2">Department</label>
+                        <input
+                            type="text"
+                            value={department}
+                            onChange={(e) => setDepartment(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-lg"
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-indigo-400">
+                        Update Employee
+                    </button>
+                </form>
+            </div>
         </div>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Name:
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Phone:
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Date Joined:
-            </label>
-            <input
-              type="date"
-              name="dateJoined"
-              value={formData.dateJoined}
-              onChange={handleChange}
-              className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Salary:
-            </label>
-            <input
-              type="number"
-              name="salary"
-              value={formData.salary}
-              onChange={handleChange}
-              className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div className="mb-4 flex items-center">
-            <input
-              type="checkbox"
-              name="paymentDone"
-              checked={formData.paymentDone}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label className="text-gray-700 font-semibold">Payment Done</label>
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition-colors"
-          >
-            Update Employee
-          </button>
-          <button
-            type="button"
-            onClick={handleCreateMeetLink}
-            className="w-full mt-4 py-2 bg-purple-500 text-white rounded-md shadow-md hover:bg-purple-600 transition-colors"
-          >
-            Create Google Meet Link
-          </button>
-        </form>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default EditEmployeePage;
+export default EditEmployee;

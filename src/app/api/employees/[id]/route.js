@@ -1,5 +1,5 @@
 // pages/api/employees/[id].js
-import { connectToDatabase } from '../../../lib/mongodb'; // Adjust path if needed
+import { connectToDatabase } from "../../../../lib/mongodb"
 import { ObjectId } from 'mongodb';
 
 export async function handler(req, res) {
@@ -9,6 +9,7 @@ export async function handler(req, res) {
 
     switch (req.method) {
         case 'PUT':
+            // eslint-disable-next-line no-case-declarations
             const { name, position, department } = req.body;
             await collection.updateOne(
                 { _id: new ObjectId(id) },
@@ -17,6 +18,7 @@ export async function handler(req, res) {
             res.json({ message: 'Employee updated' });
             break;
         case 'GET':
+            // eslint-disable-next-line no-case-declarations
             const employee = await collection.findOne({ _id: new ObjectId(id) });
             res.json(employee);
             break;

@@ -1,10 +1,9 @@
 import axios from 'axios';
+import { Buffer } from 'buffer';
 
-// Replace these with your actual credentials
 const CLIENT_ID = 'b56b761c06c840a89acb1cc2a7fea400';
 const CLIENT_SECRET = '432897501dc1457c87eff36971a91b08';
-// This token should be updated when it becomes invalid
-let REFRESH_TOKEN = 'BQAiGCA9N7wYFBuQl9SXqZRwyoQQ8YRqFzVUKegtRowtv8rC7TDU6v1p3MpeJnyIir2-nMX1G-iYfY8y7U9JjPRvP5-bJVOa_HhciYrkzTT3Za9olKI",'
+let REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN; // Store and retrieve securely from environment or session
 let accessToken = null;
 let tokenExpiration = null;
 
@@ -37,8 +36,11 @@ async function refreshAccessToken() {
     // Return the new access token
     return accessToken;
   } catch (error) {
-    // Log detailed error information
     console.error('Error refreshing access token:', error.response ? error.response.data : error.message);
+    if (error.response && error.response.data && error.response.data.error === 'invalid_grant') {
+      // Handle invalid refresh token scenario
+      throw new Error('Invalid refresh token. User needs to re-authenticate.');
+    }
     throw new Error('Could not refresh access token');
   }
 }
@@ -46,24 +48,42 @@ async function refreshAccessToken() {
 export async function searchSongs(query) {
   try {
     const token = await getAccessToken();
-    const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track`, {
+    const response = await axios.get('https://api.spotify.com/v1/search', {
+      params: {
+        q: query,
+        type: 'track',
+      },
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     });
 
-    if (!response.ok) {
-      // Log error details for debugging
-      const errorText = await response.text();
-      console.error(`Failed to search songs with query "${query}": ${response.status} ${response.statusText}`, errorText);
-      return null;
-    }
-
     // Return the search results
-    return await response.json();
+    return response.data;
   } catch (error) {
-    // Log and rethrow the error for handling in the calling code
-    console.error('Error searching songs:', error.message);
+    console.error('Error searching songs:', error.response ? error.response.data : error.message);
+    return null;
+  }
+}
+
+/**
+ * Fetches details of a specific song by its ID.
+ * @param {string} songId - The ID of the song to fetch.
+ * @returns {Promise<Object>} - A promise that resolves to the song details.
+ */
+export async function fetchSong(songId) {
+  try {
+    const token = await getAccessToken();
+    const response = await axios.get(`https://api.spotify.com/v1/tracks/${songId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    // Return the song details
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching song with ID "${songId}":`, error.response ? error.response.data : error.message);
     return null;
   }
 }

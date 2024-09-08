@@ -1,4 +1,3 @@
-// src/app/songs/page.js
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
@@ -16,7 +15,14 @@ const SongsPage = () => {
         try {
             const response = await fetch(`/api/songs?query=${encodeURIComponent(query)}`);
             if (!response.ok) {
-                throw new Error('Failed to fetch songs');
+                const errorText = await response.text();
+                if (response.status === 401) {
+                    // Handle unauthorized errors (e.g., redirect to login)
+                    setError('Session expired. Please log in again.');
+                    window.location.href = '/api/auth'; // Redirect to auth page or login
+                } else {
+                    throw new Error(errorText || 'Failed to fetch songs');
+                }
             }
             const data = await response.json();
             setSongs(data || []);

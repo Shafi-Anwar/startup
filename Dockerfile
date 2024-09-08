@@ -15,10 +15,10 @@ RUN npm install
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 3001
 
 # Install ngrok
 RUN npm install -g ngrok
 # Start ngrok and the application
-CMD ngrok http http://localhost:3000 & npm run dev
+CMD ngrok http http://localhost:3001 & npm run dev
 

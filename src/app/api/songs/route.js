@@ -18,9 +18,10 @@ export async function GET(request) {
       return NextResponse.json({ error: 'No results found or unexpected format' }, { status: 404 });
     }
 
+    // Map through the results to extract necessary fields
     const songs = searchResults.tracks.items.map(track => ({
-      id: track.id,
-      name: track.name,
+      id: track.id || 'Unknown ID',
+      name: track.name || 'Unknown Name',
       album: track.album ? track.album.name : 'Unknown Album',
       artists: track.artists ? track.artists.map(artist => artist.name).join(', ') : 'Unknown Artist',
     }));

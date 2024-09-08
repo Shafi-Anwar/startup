@@ -1,5 +1,5 @@
 import { Schema, model, models } from 'mongoose';
-import getClientPromise from "../lib/mongodb"
+import getClientPromise from '@/lib/mongodb';
 import mongoose from 'mongoose';
 
 const UserSchema = new Schema({

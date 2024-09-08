@@ -1,7 +1,7 @@
 // src/lib/mongodb.js
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.MONGODB_URI; // Make sure this is correctly set in your .env file
+const uri = process.env.MONGODB_URI; // Ensure this is correctly set in your .env file
 const client = new MongoClient(uri);
 
 let clientPromise;
@@ -15,6 +15,14 @@ if (process.env.NODE_ENV === 'development') {
 } else {
     // In production mode, use a local variable
     clientPromise = client.connect();
+}
+
+/**
+ * Returns the MongoDB client promise used for connecting to the database.
+ * @returns {Promise<MongoClient>} - A promise that resolves to the MongoDB client.
+ */
+export default function getClientPromise() {
+    return clientPromise;
 }
 
 export async function connectToDatabase() {

@@ -12,7 +12,7 @@ export async function POST(request) {
   }
 
   try {
-    await sendEmail(to, subject, text, html);
+    await sendEmail(to, subject,  text, html);
     return new Response(
       JSON.stringify({ message: 'Email sent successfully' }),
       { status: 200 }

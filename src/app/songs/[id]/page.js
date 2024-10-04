@@ -1,5 +1,5 @@
 // src/app/songs/[id]/page.js
-
+import Image from "next/image"
 import { fetchSong } from '@/lib/spotify';
 import SongPlayer from '../SongPlayer';
 
@@ -37,7 +37,7 @@ const SongPage = async ({ params }) => {
     return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg mt-6">
             <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6">
-                <img
+                <Image
                     src={song.album.images[0]?.url}
                     alt={song.album.name}
                     className="w-full md:w-64 h-64 rounded-lg object-cover shadow-lg"

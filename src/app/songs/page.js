@@ -17,7 +17,6 @@ const SongsPage = () => {
             if (!response.ok) {
                 const errorText = await response.text();
                 if (response.status === 401) {
-                    // Handle unauthorized errors (e.g., redirect to login)
                     setError('Session expired. Please log in again.');
                     window.location.href = '/api/auth'; // Redirect to auth page or login
                 } else {
@@ -26,9 +25,9 @@ const SongsPage = () => {
             }
             const data = await response.json();
             setSongs(data || []);
-        } catch (error) {
+        } catch (err) {
             setError('Error fetching songs');
-            console.error('Error fetching songs:', error);
+            console.error('Error fetching songs:', err);
         } finally {
             setLoading(false);
         }
